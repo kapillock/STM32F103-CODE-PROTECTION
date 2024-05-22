@@ -1,0 +1,67 @@
+uint8_t ReadProtectionConfig(uint8_t ProtectionLevel)
+
+{
+
+ uint8_t status = 0;
+
+ FLASH_OBProgramInitTypeDef OB_Init;
+
+ HAL_FLASH_Unlock();
+
+ HAL_FLASH_OB_Unlock();
+
+ OB_Init.OptionType = OPTIONBYTE_RDP;
+
+ if (ProtectionLevel == 0) 
+
+ {
+
+OB_Init.RDPLevel = OB_RDP_LEVEL_0;
+
+ } 
+
+ else if (ProtectionLevel == 1) 
+
+ {
+
+OB_Init.RDPLevel = OB_RDP_LEVEL_1;
+
+ }  
+
+ else 
+
+ {
+
+status = 1;
+
+return status;
+
+ }
+
+ HAL_FLASHEx_OBProgram(&OB_Init);
+
+ HAL_FLASH_OB_Launch();
+
+ HAL_FLASH_OB_Lock();
+
+ HAL_FLASH_Lock();
+
+ return status;
+
+}
+///////////////////////////////////////////////////////
+if(READ_BIT(FLASH->OBR, FLASH_OBR_RDPRT) == 0) // Checking if protection is disabled
+
+{
+
+ReadProtectionConfig(1);
+
+}
+
+else
+
+{
+
+// Do nothing
+
+}
